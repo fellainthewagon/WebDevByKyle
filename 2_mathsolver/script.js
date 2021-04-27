@@ -39,19 +39,13 @@ function parse(equation) {
 }
 
 function handleMath({ operand1, operand2, operation }) {
-  const num1 = parseFloat(operand1);
-  const num2 = parseFloat(operand2);
-
-  switch (operation) {
-    case "*":
-      return num1 * num2;
-    case "/":
-      return num1 / num2;
-    case "+":
-      return num1 + num2;
-    case "-":
-      return num1 - num2;
-    case "^":
-      return num1 ** num2;
-  }
+  const math = {
+    "*": (a, b) => a * b,
+    "/": (a, b) => a / b,
+    "+": (a, b) => a + b,
+    "-": (a, b) => a - b,
+    "^": (a, b) => a ** b,
+  };
+  const res = math[operation];
+  return res(parseFloat(operand1), parseFloat(operand2));
 }
