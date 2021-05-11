@@ -2,13 +2,17 @@ const Account = require("./Account");
 const CommandLine = require("./CommandLine");
 
 async function main() {
-  const accountName = await CommandLine.ask(
-    "Which account would you like to access?"
-  );
+  try {
+    const accountName = await CommandLine.ask(
+      "Which account would you like to access?"
+    );
 
-  const account = await Account.find(accountName);
-  if (account == null) account = await promptCreateAccount(accountName);
-  if (account != null) await promptTask(account);
+    const account = await Account.find(accountName);
+    if (account == null) account = await promptCreateAccount(accountName);
+    if (account != null) await promptTask(account);
+  } catch (e) {
+    CommandLine.print("ERROR: Please try again.");
+  }
 }
 
 async function promptCreateAccount(accountName) {
@@ -27,9 +31,20 @@ async function promptTask(account) {
   );
 
   if (response === "deposit") {
-    const amount = await CommandLine.ask("How much?");
+    const amount = parseFloat(await CommandLine.ask("How much?"));
     await account.deposit(amount);
+  } else if (response === "withdraw") {
+    const amount = parseFloat(await CommandLine.ask("How much?"));
+    try {
+      await account.withdraw(amount);
+    } catch (error) {
+      CommandLine.print(
+        `We were unable to make the withdrawal. Please ensure you have enough money in your account.`
+      );
+    }
   }
+
+  CommandLine.print(`Your balance is ${account.balance}`);
 }
 
 main();
